@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>test</title>
+</head>
+<style>
+  div {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  /* The switch - the box around the slider */
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+  }
+
+  /* Hide default HTML checkbox */
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  /* The slider */
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+
+  input[type="text"i] {
+    width: 700px;
+  }
+
+  input:checked+.slider {
+    background-color: #2196F3;
+  }
+
+  input:focus+.slider {
+    box-shadow: 0 0 1px #2196F3;
+  }
+
+  input:checked+.slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }
+
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 34px;
+  }
+
+  .slider.round:before {
+    border-radius: 50%;
+  }
+</style>
+
+<body>
+
+  <div id="app">
+    <div>
+      serverUrl: <input type="text" v-model="serverUrl">
+      <button @click="defaultServerUrl">default</button>
+      <button @click="reset">reset</button>
+    </div>
+    <div>
+      <label class="switch">
+        <input type="checkbox" v-model="status">
+        <span class="slider round"></span>
+      </label>
+    </div>
+    <div>
+      sent request count: ${requsetCount}
+    </div>
+    <div>
+      received response count: ${responseCount}
+    </div>
+    <div>
+      error count: ${errorCount}
+    </div>
+    <div>
+      unhandled request count: ${requsetCount - responseCount - errorCount}
+    </div>
+    <div>
+      <ul>
+        <li>ok: ${okCount}</li>
+        <li>Shutting Down & Not Ready: ${shuttingDownAndNotReadyCount}</li>
+        <li>Not Ready: ${notReadyCount}</li>
+        <li>Shutting Down: ${shuttingDownCount}</li>
+        <li>Not Found: ${notFoundCount}</li>
+        <li>Other: ${otherCount}</li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    const vm = new Vue({
+      el: '#app',
+      delimiters: ['${', '}'],
+      data: {
+        serverUrl: 'http://127.0.0.1:3000/test',
+        // true:"sending requset"  false:"not sending"
+        status: false,
+
+        requsetCount: 0,
+        errorCount: 0,
+        responseCount: 0,
+
+        okCount: 0,
+        shuttingDownAndNotReadyCount: 0,
+        notReadyCount: 0,
+        shuttingDownCount: 0,
+        notFoundCount: 0,
+        otherCount: 0,
+      },
+      methods: {
+        changeStatus: function () {
+          this.status = !this.status;
+        },
+        defaultServerUrl: function () {
+          this.serverUrl = 'http://127.0.0.1:3000/test';
+        },
+        reset: function () {
+          this.status = false;
+
+          this.requsetCount = 0;
+          this.responseCount = 0;
+          this.errorCount = 0;
+
+          this.okCount = 0;
+          this.shuttingDownAndNotReadyCount = 0;
+          this.notReadyCount = 0;
+          this.shuttingDownCount = 0;
+          this.notFoundCount = 0;
+          this.otherCount = 0;
+        },
+        get: function (url) {
+          this.requsetCount += 1;
+          axios.get(this.serverUrl, { timeout: 40000 })
+            .then((response) => {
+              this.responseCount += 1;
+              switch (response.data) {
+                case 'Ok':
+                  this.okCount += 1;
+                  break;
+                case 'ShuttingDownAndNotReady':
+                  this.shuttingDownAndNotReadyCount += 1;
+                  break;
+                case 'NotReady':
+                  this.notReadyCount += 1;
+                  break;
+                case 'ShuttingDown':
+                  this.shuttingDownCount += 1;
+                  break;
+                case 'NotFound':
+                  this.notFoundCount += 1;
+                  break;
+                default:
+                  this.otherCount += 1;
+                  console.log('other', response.data)
+                  break;
+              }
+            })
+            .catch((error) => {
+              this.errorCount += 1;
+              console.log('error', error)
+            })
+            .then(() => {
+              // always executed
+            });
+        },
+      },
+      mounted: function () {
+        setInterval(() => {
+          if (this.status)
+            this.get(this.serverUrl)
+        }, 5000)
+      }
+    });
+  </script>
+</body>
+
+</html>

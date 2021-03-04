@@ -1,0 +1,63 @@
+設定
+	EB -
+		Platform: Node.js 10 running on 64bit Amazon Linux 2/5.3.0
+		Proxy: nginx
+		EC2: t3.micro * 2
+		Load Balancer: Classic
+		Health check path: /ok
+		Deployment policy: Rolling (batch size: fixed 1)
+	
+	Server -
+		啟動時間: 60秒
+		OK回應時間: 10秒
+	
+	Client -
+		呼叫間隔: 5秒
+		呼叫timeout: 40秒
+
+測試方法: 更新程式前後呼叫 /test，統計傳回結果
+控制變數: Connection draining
+
+測試案例1. Connection draining 不打勾
+	開始呼叫 /test 時間:	14:42:00
+	1st 部屬開始時間:		14:43:28
+	1st 部屬完成時間:		14:47:23
+	2nd 部屬開始時間:		14:48:28
+	2nd 部屬完成時間:		14:52:19
+	結束呼叫 /test 時間:	14:53:20
+	統計時間:			14:54:10
+
+	Client 統計結果:
+		已傳送request數:	134
+		已回覆request數:	126
+			ok: 126
+			shutting down & not ready: 0
+			not ready: 0
+			shutting down: 0
+			not found: 0
+			other: 0
+		Error數: 8
+			- "Error: Network Error" * 8
+		未回覆requset數: 0
+
+
+測試案例2. Connection draining 打勾 (Draining timeout: 40秒)
+	開始呼叫 /test 時間:	15:13:00
+	1st 部屬開始時間:		15:13:54
+	1st 部屬完成時間:		15:18:02
+	2nd 部屬開始時間:		15:18:58
+	2nd 部屬完成時間:		15:23:03
+	結束呼叫 /test 時間:	15:24:30
+	統計時間:			15:25:10
+
+	Client 統計結果:
+		已傳送request數:	138
+		已回覆request數:	138
+			ok: 138
+			shutting down & not ready: 0
+			not ready: 0
+			shutting down: 0
+			not found: 0
+			other: 0
+		Error數: 0
+		未回覆requset數: 0
