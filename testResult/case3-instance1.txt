@@ -1,0 +1,55 @@
+> testserver@1.0.0 start /var/app/current
+> node server.js
+2021-03-05 09:49:43 | [server] Loading ...
+2021-03-05 09:49:43 | [server] readyDelay:60000 okDelay:10000
+2021-03-05 09:50:43 | [server] listening { address: '::', family: 'IPv6', port: 8080 }
+2021-03-05 10:03:48 | [graceful shutdown] server 收到關機訊號 SIGTERM
+2021-03-05 10:03:48 | [graceful shutdown] Closing server...
+2021-03-05 10:03:48 | [Report 1] unhandled connections 0
+2021-03-05 10:03:48 | [Report 1] totalConnections 6
+2021-03-05 10:03:48 | [Report 1] NotFound 0
+2021-03-05 10:03:48 | [Report 1] Ok 6
+2021-03-05 10:03:48 | [Report 1] ShuttingDownAndNotReady 0
+2021-03-05 10:03:48 | [Report 1] NotReady 0
+2021-03-05 10:03:48 | [Report 1] ShuttingDown 0
+2021-03-05 10:03:48 | [server] close
+2021-03-05 10:03:48 | [graceful shutdown] server closed...
+2021-03-05 10:03:48 | [Report 2] unhandled connections 0
+2021-03-05 10:03:48 | [Report 2] totalConnections 6
+2021-03-05 10:03:48 | [Report 2] NotFound 0
+2021-03-05 10:03:48 | [Report 2] Ok 6
+2021-03-05 10:03:48 | [Report 2] ShuttingDownAndNotReady 0
+2021-03-05 10:03:48 | [Report 2] NotReady 0
+2021-03-05 10:03:48 | [Report 2] ShuttingDown 0
+2021-03-05 10:03:48 | [graceful shutdown] 十秒後完美關機 ...
+2021-03-05 10:03:58 | [graceful shutdown] 完美關機
+> testserver@1.0.0 start /var/app/current
+> node server.js
+2021-03-05 10:03:58 | [server] Loading ...
+2021-03-05 10:03:58 | [server] readyDelay:60000 okDelay:10000
+2021-03-05 10:04:58 | [server] listening { address: '::', family: 'IPv6', port: 8080 }
+2021-03-05 10:09:01 | [graceful shutdown] server 收到關機訊號 SIGTERM
+2021-03-05 10:09:01 | [graceful shutdown] Closing server...
+2021-03-05 10:09:01 | [Report 1] unhandled connections 0
+2021-03-05 10:09:01 | [Report 1] totalConnections 30
+2021-03-05 10:09:01 | [Report 1] NotFound 0
+2021-03-05 10:09:01 | [Report 1] Ok 30
+2021-03-05 10:09:01 | [Report 1] ShuttingDownAndNotReady 0
+2021-03-05 10:09:01 | [Report 1] NotReady 0
+2021-03-05 10:09:01 | [Report 1] ShuttingDown 0
+2021-03-05 10:09:01 | [server] close
+2021-03-05 10:09:01 | [graceful shutdown] server closed...
+2021-03-05 10:09:01 | [Report 2] unhandled connections 0
+2021-03-05 10:09:01 | [Report 2] totalConnections 30
+2021-03-05 10:09:01 | [Report 2] NotFound 0
+2021-03-05 10:09:01 | [Report 2] Ok 30
+2021-03-05 10:09:01 | [Report 2] ShuttingDownAndNotReady 0
+2021-03-05 10:09:01 | [Report 2] NotReady 0
+2021-03-05 10:09:01 | [Report 2] ShuttingDown 0
+2021-03-05 10:09:01 | [graceful shutdown] 十秒後完美關機 ...
+2021-03-05 10:09:11 | [graceful shutdown] 完美關機
+> testserver@1.0.0 start /var/app/current
+> node server.js
+2021-03-05 10:09:12 | [server] Loading ...
+2021-03-05 10:09:12 | [server] readyDelay:60000 okDelay:10000
+2021-03-05 10:10:12 | [server] listening { address: '::', family: 'IPv6', port: 8080 }

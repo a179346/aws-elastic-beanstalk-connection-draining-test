@@ -10,7 +10,9 @@ Test the ***connection draining*** in aws elastic beanstalk.
 Call the route "/test" before and after rolling update, and observe the behavior.
 
 # Control variable
-Connection draining
+* 1 - Connection draining : disabled (Classic Load Balancer)
+* 2 - Connection draining : enabled (Draining timeout: 40 seoncds) (Classic Load Balancer)
+* 3 - Application Load Balancer
 
 # Setting
 ### EB
@@ -18,7 +20,6 @@ Connection draining
 	Platform: Node.js 10 running on 64bit Amazon Linux 2/5.3.0
 	Proxy: nginx
 	EC2: t3.micro * 2
-	Load Balancer: Classic
 	Health check path: /ok
 	Deployment policy: Rolling (batch size: fixed 1)
 ```
@@ -34,7 +35,7 @@ Connection draining
 ```
 
 # Result
-## Case 1. Connection draining : disabled
+## **Case 1. Connection draining : disabled (Classic Load Balancer)**
 Time:
 ```
 	start calling "/test":    14:42:00
@@ -67,7 +68,7 @@ EC2 logs
 
 * [instance 2](https://github.com/a179346/aws-elastic-beanstalk-connection-draining-test/blob/main/testResult/case1-instance2.txt)
 
-## Case 2. Connection draining : enabled (Draining timeout: 40秒)
+## **Case 2. Connection draining : enabled (Draining timeout: 40 seconds) (Classic Load Balancer)**
 Time:
 ```
 	start calling "/test":    15:13:00
@@ -99,10 +100,45 @@ EC2 logs
 
 * [instance 2](https://github.com/a179346/aws-elastic-beanstalk-connection-draining-test/blob/main/testResult/case2-instance2.txt)
 
+## **Case 3. Application Load Balancer**
+Time:
+```
+	start calling "/test":    10:02:20
+	1st start deployment:     10:03:15
+	1st complete deployment:  10:07:12
+	2nd start deployment:     10:08:28
+	2nd complete deployment:  10:12:25
+	stop calling "/test":     10:13:45
+	check result:             10:14:30
+```
+Avergage deployment time: 237 seconds
+
+Client result:
+```
+	sent request count: 137
+	received response count: 137
+		- ok: 137
+		- shutting down & not ready: 0
+		- not ready: 0
+		- shutting down: 0
+		- not found: 0
+		- other: 0
+	error count: 0
+	unhandled request count: 0
+```
+EC2 logs
+
+* [instance 1](https://github.com/a179346/aws-elastic-beanstalk-connection-draining-test/blob/main/testResult/case3-instance1.txt)
+
+* [instance 2](https://github.com/a179346/aws-elastic-beanstalk-connection-draining-test/blob/main/testResult/case3-instance2.txt)
+
 # Conclusion
- > If you enable connection draining, Elastic Beanstalk drains existing connections from the Amazon EC2 instances in each batch before beginning the deployment.
+ 
+ 1. > When you enable Connection Draining on a load balancer, any back-end instances that you deregister will complete requests that are in progress before deregistration. - [AWS what's new 2014-03-20](https://aws.amazon.com/tw/about-aws/whats-new/2014/03/20/elastic-load-balancing-supports-connection-draining/)
+ 2. Application Load Balancer enable connection draining in default.
 
 ## Pros of connection draining
 * Avoid network error
+
 ## Cons of connection draining
 * Slightly increase the time of deployment

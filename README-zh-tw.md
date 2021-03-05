@@ -4,13 +4,15 @@
 [中文](https://github.com/a179346/aws-elastic-beanstalk-connection-draining-test/blob/main/README-zh-tw.md)
 
 # 實驗目的
-測試 aws elastic beanstalk 的 connection draining。
+測試 aws elastic beanstalk 的 connection draining (連接耗盡) 。
 
 # 測試方法
 更新程式前後呼叫 /test，統計傳回結果。
 
 # 控制變數
-Connection draining
+* 1 - Connection draining : disabled (Classic Load Balancer)
+* 2 - Connection draining : enabled (Draining timeout: 40秒) (Classic Load Balancer)
+* 3 - Application Load Balancer
 
 # 設定
 ### EB
@@ -18,7 +20,6 @@ Connection draining
 	Platform: Node.js 10 running on 64bit Amazon Linux 2/5.3.0
 	Proxy: nginx
 	EC2: t3.micro * 2
-	Load Balancer: Classic
 	Health check path: /ok
 	Deployment policy: Rolling (batch size: fixed 1)
 ```
@@ -34,7 +35,7 @@ Connection draining
 ```
 
 # 測試結果
-## 案例1. Connection draining : disabled
+## **案例1. Connection draining : disabled (Classic Load Balancer)**
 實驗時間:
 ```
 	開始呼叫 /test 時間:	14:42:00
@@ -67,7 +68,7 @@ EC2 logs
 
 * [instance 2](https://github.com/a179346/aws-elastic-beanstalk-connection-draining-test/blob/main/testResult/case1-instance2.txt)
 
-## 案例2. Connection draining : enabled (Draining timeout: 40秒)
+## **案例2. Connection draining : enabled (Draining timeout: 40秒) (Classic Load Balancer)**
 實驗時間:
 ```
 	開始呼叫 /test 時間:	15:13:00
@@ -99,10 +100,44 @@ EC2 logs
 
 * [instance 2](https://github.com/a179346/aws-elastic-beanstalk-connection-draining-test/blob/main/testResult/case2-instance2.txt)
 
+## **案例3. Application Load Balancer**
+實驗時間:
+```
+	開始呼叫 /test 時間:	10:02:20
+	1st 部屬開始時間:	10:03:15
+	1st 部屬完成時間:	10:07:12
+	2nd 部屬開始時間:	10:08:28
+	2nd 部屬完成時間:	10:12:25
+	結束呼叫 /test 時間:	10:13:45
+	統計時間:		10:14:30
+```
+平均部屬時間: 237秒
+
+Client 統計結果:
+```
+	已傳送request數: 137
+	已回覆request數: 137
+		- ok: 137
+		- shutting down & not ready: 0
+		- not ready: 0
+		- shutting down: 0
+		- not found: 0
+		- other: 0
+	Error數: 0
+	未回覆requset數: 0
+```
+EC2 logs
+
+* [instance 1](https://github.com/a179346/aws-elastic-beanstalk-connection-draining-test/blob/main/testResult/case3-instance1.txt)
+
+* [instance 2](https://github.com/a179346/aws-elastic-beanstalk-connection-draining-test/blob/main/testResult/case3-instance2.txt)
+
 # 實驗結論
-> 若啟用連接耗盡，Elastic Beanstalk 會將批次內 Amazon EC2 執行個體的現有連線耗盡，之後才進行部署。
+1. > 當啟用connection draining，在load balancer要解除ec2執行個體之前，會等待個體完成已接受的請求 - [AWS what's new 2014-03-20](https://aws.amazon.com/tw/about-aws/whats-new/2014/03/20/elastic-load-balancing-supports-connection-draining/)
+2. Application Load Balancer 預設開啟 connection draining
 
 ## 開啟 connection draining 優點
 * 可以避免http requset突然中止而產生的network error錯誤。
+
 ## 開啟 connection draining 缺點
 * 小幅度增加部屬時間
