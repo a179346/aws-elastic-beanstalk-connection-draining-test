@@ -26,7 +26,7 @@ Call the route "/test" before and after rolling update, and observe the behavior
 ### server
 ```
 	server ready delay: 60 seconds
-	server send ok delay: 10 seconds
+	server "/test" send ok delay: 10 seconds
 ```
 ### client
 ```
